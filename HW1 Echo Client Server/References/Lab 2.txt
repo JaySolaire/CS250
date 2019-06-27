@@ -1,0 +1,22 @@
+struct sockaddr_in {
+
+	unsigned short sin_family;
+	unsigned short sin_port;
+
+}
+
+This is a good start to creating a socket; however, it is not complete. An internet socket consists of an IP address and a port number. Those two pieces of information make up every internet socket.
+When looking at this code, the first line defines the address family. Usually IPV4, this could also be other things, such as UNIX based.
+The second line defines the port number. However, the socket is not complete without the IP address, so the line 
+struct in_addr	sin_addr; must be added, where the sin_addr struct holds the net ID, as defined below.
+
+struct in_addr {
+   unsigned long s_addr;
+};
+
+This is its own structure, as opposed to simply the unsigned long, because the structure is often much longer than that. The s_addr is simply the only necessary part.
+Additionally, I would also add a char, set to zero, in the sockaddr_in struct, like so.
+
+char             sin_zero[8];
+
+This line is not necessary- it is simply set to zero. The reason it is important is because when transferring data, some net code uses sockaddr instead of sockaddr_in. Sockaddr is an older struct that holds much the same information, but with a char as well. When the information is cast over, the two structs need to be the same size, so the char is kept in sockaddr_in to avoid errors.
